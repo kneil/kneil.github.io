@@ -1,0 +1,24 @@
+
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.2/jquery.min.js">
+</script>
+
+
+<script>
+
+function nowDoSomethingWithIt ( lang ) { 
+
+alert ( lang );
+
+}
+
+
+$.ajax({ 
+    url: "http://ajaxhttpheaders.appspot.com", 
+    dataType: 'jsonp', 
+    success: function(headers) {
+        language = headers['Accept-Language'];
+        nowDoSomethingWithIt(language);
+    }
+});
+
+</script>
