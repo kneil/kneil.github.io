@@ -15,8 +15,13 @@ function getWeekNumber(d) {
     return weekNo;
 }
 
-var WeekResult = getWeekNumber(new Date());
-//var WeekResult = getWeekNumber(new Date("August 21, 2017 12:00:00"));
+var date = new Date();
+date.setDate(date.getDate() + 1);
+var WeekResult = getWeekNumber(date);
+
+var videoDate = new Date();
+videoDate.setDate(videoDate.getDate() + 4);
+var VideoWeekResult = getWeekNumber(videoDate);
 
 WiBTurn = new Array;
 
@@ -38,6 +43,6 @@ Turn = TheDateOfTheYear % 3;
 BookTurn = TheDateOfTheYear % 2;
 
 ComTurnWeek = (  WeekResult + 1  )  % 2;
-
-document.write (   ' What' + "'" + 's in the box: ' +  WiBTurn[Turn]  + '<br><br>                         Communion: ' + ComTurn[ComTurnWeek]         + '<br><br>                         Book turn: ' + ComTurn[BookTurn]   ) ;
+VideoTurn = ( VideoWeekResult ) % 2 ;
+document.write (   ' What' + "'" + 's in the box: ' +  WiBTurn[Turn]  + '<br><br>                         Communion: ' + ComTurn[ComTurnWeek]         + '<br><br>                         Book turn: ' + ComTurn[BookTurn]            + '<br><br>                         Video turn ' + ComTurn[VideoTurn] ) ;
 </script>
