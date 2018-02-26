@@ -40,7 +40,8 @@ Date.prototype.dayOfYear= function(){
 TheDateOfTheYear = new Date().dayOfYear();
 
 Turn = TheDateOfTheYear % 3;
-BookTurn = TheDateOfTheYear % 2;
+//BookTurn = TheDateOfTheYear % 2;
+BookTurn = Turn;
 
 ComTurnWeek = (  WeekResult +2  )  % 3;
 VideoTurn = ( VideoWeekResult ) % 2 ;
