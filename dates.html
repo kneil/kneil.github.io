@@ -23,13 +23,8 @@ var videoDate = new Date();
 videoDate.setDate(videoDate.getDate() + 4);
 var VideoWeekResult = getWeekNumber(videoDate);
 
-WiBTurn = new Array;
-
-WiBTurn = ["Edward", "Beatrice", "Christina"];
-
-ComTurn = new Array;
-
-ComTurn = ["Edward", "Beatrice","Christina"];
+Children = new Array;
+Children = ["Edward", "Beatrice", "Christina"];
 
 Date.prototype.dayOfYear= function(){
     var j1= new Date(this);
@@ -39,11 +34,15 @@ Date.prototype.dayOfYear= function(){
 
 TheDateOfTheYear = new Date().dayOfYear();
 
+// WiB turn
 Turn = TheDateOfTheYear % 3;
 //BookTurn = TheDateOfTheYear % 2;
 BookTurn = Turn;
 
 ComTurnWeek = (  WeekResult +2  )  % 3;
 VideoTurn = ( VideoWeekResult ) % 2 ;
-document.write (   ' What' + "'" + 's in the box: ' +  WiBTurn[Turn]  + '<br><br>                         Communion: ' + ComTurn[ComTurnWeek]         + '<br><br>                         Book turn: ' + ComTurn[BookTurn]            + '<br><br>                         Video turn ' + ComTurn[VideoTurn] ) ;
+document.write (' What' + "'" + 's in the box: ' + Children[Turn] +
+                '<br><br>Communion: ' + Children[ComTurnWeek] +
+                '<br><br>Book turn: ' + Children[BookTurn] +
+                '<br><br>Video turn: '+ Children[VideoTurn]) ;
 </script>
