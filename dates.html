@@ -29,7 +29,7 @@ WiBTurn = ["Edward", "Beatrice", "Christina"];
 
 ComTurn = new Array;
 
-ComTurn = ["Edward", "Beatrice"];
+ComTurn = ["Edward", "Beatrice","Christina"];
 
 Date.prototype.dayOfYear= function(){
     var j1= new Date(this);
@@ -42,7 +42,7 @@ TheDateOfTheYear = new Date().dayOfYear();
 Turn = TheDateOfTheYear % 3;
 BookTurn = TheDateOfTheYear % 2;
 
-ComTurnWeek = (  WeekResult + 1  )  % 2;
+ComTurnWeek = (  WeekResult +2  )  % 3;
 VideoTurn = ( VideoWeekResult ) % 2 ;
 document.write (   ' What' + "'" + 's in the box: ' +  WiBTurn[Turn]  + '<br><br>                         Communion: ' + ComTurn[ComTurnWeek]         + '<br><br>                         Book turn: ' + ComTurn[BookTurn]            + '<br><br>                         Video turn ' + ComTurn[VideoTurn] ) ;
 </script>
