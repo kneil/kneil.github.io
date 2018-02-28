@@ -110,7 +110,8 @@
                             currentContent = action.getTemplateContents();
                             for (var property in object) {
                                 if (object.hasOwnProperty(property)) {
-                                    currentContent = currentContent.replace('' + property + '', object[property]);
+				    var regex = new RegExp(property, "g");
+                                    currentContent = currentContent.replace(regex, object[property]);
                                 }
                             }
                             action.render(currentContent);
@@ -154,13 +155,13 @@
 
     mainApp = new App.Action();
     mainApp.renderTemplate('/test.tpl', {
-        "$wib$": wib.getChildren()[
+        "{{ wib }}": wib.getChildren()[
             wib.getTurn()
         ],
-        "$com$": communion.getChildren()[
+        "{{ com }}": communion.getChildren()[
             communion.getTurn(2)
         ],
-        "$vid$": video.getChildren()[
+        "{{ vid }}": video.getChildren()[
             video.getTurn(0)
         ]
     });

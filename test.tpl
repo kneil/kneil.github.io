@@ -1,11 +1,11 @@
 <h1>
 Turns
 <br><br>
-What's in the box turn: $wib$
+What's in the box turn: {{ wib }}
 <br><br>
-Book turn: $wib$
+Book turn: {{ wib }}
 <br><br>
-Communion Turn: $com$
+Communion Turn: {{ com }}
 <br><br>
-Video Turn: $vid$
+Video Turn: {{ vid }}
 
