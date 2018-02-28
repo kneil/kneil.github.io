@@ -3,7 +3,9 @@ Turns
 <br><br>
 What's in the box turn: $wib$
 <br><br>
-Communion Turn : $com$
+Book turn: $wib$
 <br><br>
-Video Turn : $vid$
+Communion Turn: $com$
+<br><br>
+Video Turn: $vid$
 
