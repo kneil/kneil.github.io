@@ -110,7 +110,7 @@
                             currentContent = action.getTemplateContents();
                             for (var property in object) {
                                 if (object.hasOwnProperty(property)) {
-				    var regex = new RegExp(property, "g");
+                                    var regex = new RegExp(property, "g");
                                     currentContent = currentContent.replace(regex, object[property]);
                                 }
                             }
