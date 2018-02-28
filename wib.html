@@ -4,8 +4,57 @@
         j1.setMonth(0, 0);
         return Math.round((this - j1) / 8.64e7);
     };
-
+	
     App = {
+	View: function() {
+
+                this.templateContents = null;
+
+                this.setTemplateContents = function(value) {
+                    this.templateContents = value;
+                    return this;
+                };
+
+                this.getTemplateContents = function() {
+                    return this.templateContents;
+                };
+
+                this.render = function(text) {
+                    document.write(text);
+                    this.setTemplateContents(text);
+                }
+
+                this.renderTemplate = function(url, object) {
+                    var client = new XMLHttpRequest();
+                    this.object = object;
+                    action = this;
+                    client.open('GET', url);
+                    client.onreadystatechange = function() {
+                        if (client.readyState == 4) {
+                            action.setTemplateContents(client.responseText);
+                            currentContent = action.getTemplateContents();
+                            for (var property in object) {
+                                if (object.hasOwnProperty(property)) {
+                                    var regex = new RegExp(property, "g");
+                                    currentContent = currentContent.replace(regex, object[property]);
+                                }
+                            }
+                            action.render(currentContent);
+                            action.setTemplateContents(currentContent);
+                        }
+                    }
+                    client.send();
+                }
+
+                this.extend = function(object) {
+                    for (var property in object) {
+                        if (object.hasOwnProperty(property)) {
+                            this.super[property] = this[property];
+                            this[property] = object[property];
+                        }
+                    }
+		}
+	},
         Action:
 
             function(name) {
@@ -14,7 +63,6 @@
                 this.name = name;
                 this.type = "daily";
                 this.super = {};
-                this.templateContents = null;
                 this.children = new Array;
 
                 this.theDateOfTheYear = function(modulus) {
@@ -85,42 +133,6 @@
                     }
                 };
 
-                this.setTemplateContents = function(value) {
-                    this.templateContents = value;
-                    return this;
-                };
-
-                this.getTemplateContents = function() {
-                    return this.templateContents;
-                };
-
-                this.render = function(text) {
-                    document.write(text);
-                    this.setTemplateContents(text);
-                }
-
-                this.renderTemplate = function(url, object) {
-                    var client = new XMLHttpRequest();
-                    this.object = object;
-                    action = this;
-                    client.open('GET', url);
-                    client.onreadystatechange = function() {
-                        if (client.readyState == 4) {
-                            action.setTemplateContents(client.responseText);
-                            currentContent = action.getTemplateContents();
-                            for (var property in object) {
-                                if (object.hasOwnProperty(property)) {
-                                    var regex = new RegExp(property, "g");
-                                    currentContent = currentContent.replace(regex, object[property]);
-                                }
-                            }
-                            action.render(currentContent);
-                            action.setTemplateContents(currentContent);
-                        }
-                    }
-                    client.send();
-                }
-
                 this.extend = function(object) {
                     for (var property in object) {
                         if (object.hasOwnProperty(property)) {
@@ -153,8 +165,8 @@
         .addChild('Beatrice')
         .setType('weekly');
 
-    mainApp = new App.Action();
-    mainApp.renderTemplate('/test.tpl', {
+    appView = new App.View();
+    appView.renderTemplate('/test.tpl', {
         "{{ wib }}": wib.getChildren()[
             wib.getTurn()
         ],
