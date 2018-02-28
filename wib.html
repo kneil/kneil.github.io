@@ -1,0 +1,180 @@
+<script>
+    Date.prototype.dayOfYear = function() {
+        var j1 = new Date(this);
+        j1.setMonth(0, 0);
+        return Math.round((this - j1) / 8.64e7);
+    };
+
+    App = {
+        Action:
+
+            function(name) {
+
+                this.object = {};
+                this.name = name;
+                this.type = "daily";
+                this.super = {};
+                this.templateContents = null;
+                this.children = new Array;
+
+                this.theDateOfTheYear = function(modulus) {
+                    TheDateOfTheYear = new Date().dayOfYear();
+                    return TheDateOfTheYear % modulus;
+                };
+
+                this.getWeekResult = function(offset) {
+                    var date = new Date();
+                    date.setDate(date.getDate());
+                    weekNumber = this.getWeekNumber(date);
+                    return weekNumber + offset;
+                };
+
+                this.getWeekNumber = function(d) {
+
+                    // Copy date so don't modify original
+                    d = new Date(Date.UTC(d.getFullYear(), d.getMonth(), d.getDate()));
+                    // Set to nearest Thursday: current date + 4 - current day number
+                    // Make Sunday's day number 7
+                    d.setUTCDate(d.getUTCDate() + 4 - (d.getUTCDay() || 7));
+                    // Get first day of year
+                    var yearStart = new Date(Date.UTC(d.getUTCFullYear(), 0, 1));
+
+                    // Calculate full weeks to nearest Thursday
+                    var weekNo = Math.ceil((((d - yearStart) / 86400000) + 1) / 7);
+
+                    // Return array of year and week number
+                    return weekNo;
+                };
+
+                this.setName = function(name) {
+                    this.name = name;
+                    return this;
+                };
+
+                this.getType = function() {
+                    return this.type;
+                };
+
+                this.setType = function(type) {
+                    this.type = type;
+                    return this;
+                };
+
+                this.myFunction = function() {
+                    alert('Hello');
+                };
+
+                this.getName = function() {
+                    return this.name;
+                };
+
+                this.addChild = function(child) {
+                    this.children.push(child);
+                    return this;
+                };
+
+                this.getChildren = function() {
+                    return this.children;
+                };
+
+                this.getTurn = function(offset) {
+                    if (this.type == 'weekly') {
+                        return this.getWeekResult(offset) % this.getChildren().length;
+                    } else {
+                        return this.theDateOfTheYear(this.getChildren().length);
+                    }
+                };
+
+                this.setTemplateContents = function(value) {
+                    this.templateContents = value;
+                    return this;
+                };
+
+                this.getTemplateContents = function() {
+                    return this.templateContents;
+                };
+
+                this.render = function(text) {
+                    document.write(text);
+                    this.setTemplateContents(text);
+                }
+
+                this.renderTemplate = function(url, object) {
+                    var client = new XMLHttpRequest();
+                    this.object = object;
+                    action = this;
+                    client.open('GET', url);
+                    client.onreadystatechange = function() {
+                        if (client.readyState == 4) {
+                            action.setTemplateContents(client.responseText);
+                            currentContent = action.getTemplateContents();
+                            for (var property in object) {
+                                if (object.hasOwnProperty(property)) {
+                                    currentContent = currentContent.replace('' + property + '', object[property]);
+                                }
+                            }
+                            action.render(currentContent);
+                            action.setTemplateContents(currentContent);
+                        }
+                    }
+                    client.send();
+                }
+
+                this.extend = function(object) {
+                    for (var property in object) {
+                        if (object.hasOwnProperty(property)) {
+                            this.super[property] = this[property];
+                            this[property] = object[property];
+                        }
+                    }
+                };
+
+            }
+    };
+
+    wib = new App.Action()
+        .setName('What is in the box')
+        .addChild('Edward')
+        .addChild('Beatrice')
+        .addChild('Christina')
+        .setType('daily');
+
+    communion = new App.Action()
+        .setName('Communion')
+        .addChild('Edward')
+        .addChild('Beatrice')
+        .addChild('Christina')
+        .setType('weekly');
+
+    video = new App.Action()
+        .setName('Video turn')
+        .addChild('Edward')
+        .addChild('Beatrice')
+        .setType('weekly');
+
+    mainApp = new App.Action();
+    mainApp.renderTemplate('/js/js/test.tpl', {
+        "$wib$": wib.getChildren()[
+            wib.getTurn()
+        ],
+        "$com$": communion.getChildren()[
+            communion.getTurn(2)
+        ],
+        "$vid$": video.getChildren()[
+            video.getTurn(0)
+        ]
+    });
+
+    /*
+    Extension example:
+
+    wib.extend({
+    	 "myFunction" : function (){
+    		alert ("hi");
+    		//this.super.myFunction();
+    		//this._super("myFunction");
+    		this.super.myFunction();
+    	}
+    });
+    */
+</script>
