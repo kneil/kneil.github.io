@@ -1,3 +1,12 @@
+<script>
+/*
+  document.write('<script src="http://' + (location.host || 'localhost').split(':')[0] +
+  ':35729/livereload.js?snipver=1"></' + 'script>')
+*/
+</script>
+
+
+<link rel="stylesheet" type="text/css" href="test.css">
 <h1>
 <script>
 
@@ -26,6 +35,9 @@ var VideoWeekResult = getWeekNumber(videoDate);
 Children = new Array;
 Children = ["Edward", "Beatrice", "Christina"];
 
+Bins = new Array;
+Bins = ["Big bins" , "Just recycling"];
+
 Date.prototype.dayOfYear= function(){
     var j1= new Date(this);
     j1.setMonth(0, 0);
@@ -39,10 +51,11 @@ Turn = TheDateOfTheYear % 3;
 //BookTurn = TheDateOfTheYear % 2;
 BookTurn = Turn;
 
-ComTurnWeek = (  WeekResult +2  )  % 3;
-VideoTurn = ( VideoWeekResult ) % 2 ;
-document.write (' What' + "'" + 's in the box: ' + Children[Turn] +
-                '<br><br>Communion: ' + Children[ComTurnWeek] +
-                '<br><br>Book turn: ' + Children[BookTurn] +
-                '<br><br>Video turn: '+ Children[VideoTurn]) ;
+ComTurnWeek = (  WeekResult +1  )  % 3;
+VideoTurn = ( VideoWeekResult +1 ) % 2 ;
+document.write ('<span class=inner1>What' + "'" + 's in the box: ' + Children[Turn] +
+                '</span><br><br><span class=inner2>Communion: ' + Children[ComTurnWeek] +
+//                '<br><br></span><span class=inner1>Book turn: ' + Children[Turn] +
+                '<br><br></span><span class=inner1>Video turn: '+ Children[VideoTurn] + '</span>'  +
+                '<br><br></span><span class=inner2>Bin turn: '+ Bins[VideoTurn] + '</span>') ;
 </script>
