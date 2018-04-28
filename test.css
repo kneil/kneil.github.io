@@ -4,16 +4,16 @@
   color: grey;
   border-width: 2px;
   margin auto;
-	padding: 18px;
+	padding: 1px;
 	background-color: #F8F8F8;
-	width: 20px;
+	width: 2px;
 }
 
 .inner2 {
 	/*margin: 30px;*/
   border-width: 3px;
 	margin: auto;
-	padding: 18px;
+	padding: 1px;
 	background-color: #F0F0F0;
-	width: 20px;
+	width: 2px;
 }
