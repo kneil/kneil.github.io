@@ -37,6 +37,10 @@ var VideoWeekResult = getWeekNumber(videoDate);
 Children = new Array;
 Children = ["Edward", "Beatrice", "Christina"];
 
+
+WibChildren = new Array;
+WibChildren = ["Edward", "Alexander", "Beatrice", "Christina"];
+
 Bins = new Array;
 Bins = ["Big bins" , "Just recycling"];
 
@@ -49,15 +53,17 @@ Date.prototype.dayOfYear= function(){
 TheDateOfTheYear = new Date().dayOfYear();
 
 // WiB turn
-Turn = TheDateOfTheYear % 3;
+WibTurn = ( TheDateOfTheYear + 1 )  % 4;
+Turn = ( TheDateOfTheYear - 1 )  % 3;
 //BookTurn = TheDateOfTheYear % 2;
 BookTurn = Turn;
 
 ComTurnWeek = (  WeekResult +1  )  % 3;
 VideoTurn = ( VideoWeekResult +1 ) % 2 ;
-document.write ('<span class=inner1>What' + "'" + 's in the box: <br><br>' + Children[Turn] +
-                '</span><br><br><span class=inner2>Communion: <br><br>' + Children[ComTurnWeek] +
-//                '<br><br></span><span class=inner1>Book turn: <br><br>' + Children[Turn] +
-                '<br><br></span><span class=inner1>Video turn: <br><br>'+ Children[VideoTurn] + '</span>'  +
-                '<br><br></span><span class=inner2>Bin turn: <br><br>'+ Bins[VideoTurn] + '</span>') ;
+document.write ('<span class=inner2>What' + "'" + 's in the box: <br><br>' + WibChildren[WibTurn] +
+                '</span><br><br><span class=inner1>Reading: <br><br>' + Children[Turn] +
+                '<!--</span><br><br><span class=inner2>Communion: <br><br>' + Children[ComTurnWeek] +
+//                '<br><br>/span><span class=inner1>Book turn: <br><br>' + Children[Turn] +
+                '--><br><br></span><span class=inner2>Video turn: <br><br>'+ Children[VideoTurn] + '</span>'  +
+                '<br><br></span><span class=inner1>Bin turn: <br><br>'+ Bins[VideoTurn] + '</span>') ;
 </script>
