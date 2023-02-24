@@ -1,0 +1,51 @@
+<html>
+<head>
+
+<title>Number of national holiday days per year in Romania ( excluding weekends ) </title>
+
+</head>
+
+<body>
+<h1>Number of national holiday days per year in Romania ( excluding weekends )</h1>
+<h2> 
+<script type="text/javascript">
+
+function printHols (year) { 
+
+var hols = 13
+
+var dt0=  new Date("January 1, "+ year + " 12:00:00");
+var dt1 = new Date("January 2, "+ year + " 12:00:00");
+var dt2 = new Date ("January 24, " + year +" 12:00:00");
+var dt3 = new Date("May 1, " + year + " 12:00:00");
+var dt4 = new Date("June 1, " + year + " 12:00:00");
+var dt5 = new Date("August 15," + year + " 12:00:00");
+var dt6 = new Date("November 30, " + year + " 12:00:00");
+var dt7 = new Date("December 1, " + year + " 12:00:00");
+var dt8 = new Date("December 25," + year +  " 12:00:00");
+var dt9 = new Date("December 26," + year + " 12:00:00");
+
+document.write("<br>year: " + year ); 
+
+if (dt0.getDay() == 6 || dt0.getDay() == 0) { hols = hols - 1 };
+if (dt1.getDay() == 6 || dt1.getDay() == 0) { hols = hols - 1 };
+if (dt2.getDay() == 6 || dt2.getDay() == 0) { hols = hols - 1 };
+if (dt3.getDay() == 6 || dt3.getDay() == 0) { hols = hols - 1 };
+if (dt4.getDay() == 6 || dt4.getDay() == 0) { hols = hols - 1 };
+if (dt5.getDay() == 6 || dt5.getDay() == 0) { hols = hols - 1 }; 
+if (dt6.getDay() == 6 || dt6.getDay() == 0) { hols = hols - 1 };
+if (dt7.getDay() == 6 || dt7.getDay() == 0) { hols = hols - 1 }; 
+if (dt8.getDay() == 6 || dt8.getDay() == 0) { hols = hols - 1 }; 
+if (dt9.getDay() == 6 || dt9.getDay() == 0) { hols = hols - 1 };
+
+document.write("<br>total hols :" +hols );
+
+} for (y = 1980; y< 2200 ; y++) { 
+
+printHols (y)
+
+}
+
+</script>
+
+</body> </html>
