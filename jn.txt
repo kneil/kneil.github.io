@@ -1,0 +1,178 @@
+Cerinte Aplicatie Legal Wizard
+ 
+A) Cerinte generale ale platformei
+A1. Utilizatori, roluri, organizatii
+● Multi-tenant: Suport pentru mai multe organizatii (ex: firme de avocatura, departamente bancare), cu izolare stricta a datelor.
+● Roluri: Administrator Organizatie, Coordonator Legal, Avocat/Jurist, Revizor (Review), Doar-citire (Read-Only), Auditor.
+● Autentificare: SSO (SAML/OIDC), MFA obligatoriu; optional email/parola pentru faza pilot.
+SSO (Single Sign-On) = „o singura parola pentru tot.”
+Adica utilizatorul se logheaza o singura data (de exemplu, cu contul de la firma / banca / Google), si apoi are acces direct la aplicatie, fara sa mai bage user+parola inca o data.
+SAML/OIDC = „protocoalele tehnice” prin care aplicatia vorbeste cu acel serviciu de autentificare (ex: sistemul de logare al companiei). 
+MFA obligatoriu (Multi-Factor Authentication) = „parola + inca un pas de verificare.”
+Pe langa parola, utilizatorul mai trebuie sa confirme identitatea printr-un cod primit pe telefon, o aplicatie de autentificare, sau un token fizic. Scopul: chiar daca cineva fura parola, tot nu poate intra.
+Traducere in comportament al utilizatorului: “Utilizatorii se vor loga in aplicatie cu acelasi cont pe care il folosesc deja in companie (o singura parola pentru toate aplicatiile). Pentru siguranta, logarea trebuie sa includa si un pas suplimentar de verificare, cum ar fi un cod pe telefon.”
+● Autorizare (RBAC/ABAC): Acces pe nivel de dosar; posibilitatea de restrictionare pe GB/LOB; permisiuni la nivel de camp pentru PII sensibil.
+Autorizare (RBAC/ABAC) = regulile care stabilesc cine are voie sa vada sau sa faca ceva in aplicatie.
+● RBAC (Role-Based Access Control) = accesul se da pe roluri („administrator”, „avocat”, „jurist” etc.).
+● ABAC (Attribute-Based Access Control) = accesul se da si pe baza unor criterii suplimentare („poti vedea doar dosarele din Romania” sau „doar documentele create de echipa ta”).
+ 
+Exemple acces pe roluri:
+Administrator organizatie: vede toate dosarele, poate adauga utilizatori si seta permisiuni.
+Avocat coordonator: vede dosarele echipei lui, poate aproba documente pentru client.
+Jurist: vede doar documentele la care a fost alocat, poate edita dar nu poate sterge.
+Auditor: nu poate modifica nimic, doar vizualizeaza rapoarte si istoricul de actiuni.
+ 
+Exemple acces pe criterii:
+Un avocat din departamentul „Credite” vede doar dosarele care tin de credite bancare.
+Un jurist din filiala Bucuresti nu are acces la dosarele filialei Cluj.
+O persoana desemnata pentru conformitate GDPR are acces la toate dosarele, dar doar pentru a verifica respectarea regulilor.
+ 
+Acces pe nivel de dosar = un utilizator poate vedea doar anumite dosare, nu toate.
+Avocatul X este alocat pe „Dosarul Popescu vs Banca Y” → poate vedea doar acel dosar si documentele aferente.
+Avocatul Y, care lucreaza pe alt dosar, nu are cum sa acceseze documentele lui X.
+ 
+Restrictionare pe GB/LOB = se poate limita accesul pe linie de business (GB = Global Business, LOB = Line of Business). Exemplu: cine lucreaza la „Credite” nu poate vedea dosarele de „Carduri”.
+Permisiuni la nivel de camp pentru PII sensibil = anumite informatii personale (de ex. CNP, adresa, cont bancar) pot fi ascunse sau vizibile doar pentru persoanele cu drepturi speciale.
+Exemple:
+Intr-un contract sau intr-o petitie apare CNP-ul reclamantului → vizibil doar pentru avocatul responsabil si administrator. Pentru restul, acel camp apare mascat (ex: „***”).
+Adresa reclamantului sau contul bancar → ascunse pentru jurist, vizibile doar pentru avocatul coordonator.
+Numele complet al unei persoane fizice → vizibil pentru avocati, dar ascuns pentru auditor (care vede doar initiale).
+ 
+ 
+Rol utilizator	Ce poate vedea/accesa	Ce poate face	Ce NU poate face
+Administrator organizatie	Toate dosarele, toate documentele, toate datele (inclusiv PII sensibile)	Adauga/sterge utilizatori, seteaza permisiuni, sterge dosare, configureaza aplicatia	—
+Avocat coordonator	Toate dosarele echipei sale, documentele complete (inclusiv PII)	Creeaza/editeaza documente, aproba pentru client, aloca dosare altor avocati/juristi	Nu poate sterge utilizatori sau seta permisiuni generale
+Avocat asociat (junior)	Doar dosarele la care este alocat, documentele aferente (PII vizibil)	Creeaza si editeaza documente, propune versiuni	Nu poate aproba sau publica documente fara coordonator
+Jurist	Doar documentele la care este alocat (PII partial mascat, ex. CNP/cont bancar ascuns)	Poate incarca documente, face corecturi de formatare, adauga date auxiliare	Nu poate vizualiza date sensibile, aproba sau sterge documente
+Revizor (intern)	Documente si dosare atribuite pentru verificare (PII vizibil partial)	Adauga comentarii, marcheaza erori, sugereaza modificari	Nu poate edita direct documentele, nu poate aproba
+Auditor (extern)	Toate dosarele si istoricul de actiuni (PII mascat – ex. doar initiale)	Poate genera rapoarte de audit, export jurnale de activitate	Nu poate edita, aproba, sterge sau crea documente
+Utilizator doar-citire	Doar documentele partajate cu el (PII mascat)	Doar vizualizare	Nu poate edita, incarca, sterge sau aproba
+ 
+ 
+ 
+A2. Securitate si conformitate (standard bancar)
+● Protectia datelor: TLS 1.2+, AES-256 la stocare, chei gestionate prin KMS; optional chei gestionate de client.
+TLS 1.2+ = modul prin care datele sunt protejate atunci cand circula pe internet intre utilizator si aplicatie.
+➝ Practic, inseamna ca „traficul” este criptat (nimeni nu poate citi sau modifica mesajele pe drum).
+ 
+AES-256 la stocare = modul in care datele sunt protejate atunci cand sunt salvate pe servere/discuri.
+➝ AES-256 este un algoritm de criptare foarte puternic, standard in domeniul bancar si militar.
+ 
+Chei gestionate prin KMS (Key Management Service) = sistemul care administreaza „cheile de criptare” folosite pentru a bloca/debloca datele.
+➝ In loc sa fie gestionate manual (ceea ce ar fi riscant), cheile sunt controlate centralizat de un serviciu specializat (de ex. AWS KMS, Azure Key Vault, Google Cloud KMS). Acesta asigura rotatia lor periodica, audit si acces doar pentru persoane autorizate.
+● PII: Pipeline de redactare (ascundere) pe server; categorii de PII configurabile; acces reversibil doar cu privilegii.
+● Audit: Jurnal imuabil (cine/ce/cand, prompturi, versiuni de model, rezultate, editari, exporturi).
+● Conformitate: GDPR, considerente Schrems II (rezidenta datelor in UE), sabloane pentru DPA/BAA, obiectiv ISO 27001/SOC 2.
+● Siguranta: Disclaimer vizibil „Nu constituie consultanta juridica”; limite explicabilitate; puncte de control „human-in-the-loop”.
+ 
+A3. Documente & date
+● Incarcare: Drag & drop si API; tipuri acceptate: PDF (inclusiv scanari OCR), DOCX, TXT, CSV; ulterior integrare e-mail.
+● Normalizare: OCR + detectie layout; fragmentare pentru LLM; mentinere ancore pentru citari.
+● Versionare: Fiecare artefact versionat; posibilitate de comparare si revenire la versiuni anterioare.
+● Sabloane & clauze: Biblioteca cu etichete (jurisdictie, limba, nivel de risc, tip contract); flux de aprobare.
+A4. UX (interfata utilizator)
+● Spatii de lucru: File pentru cele 4 module; bara laterala comuna „Caz/Dosar” (metadate: jurisdictie, instanta, GB, parti).
+● Vizualizari comparative: Original vs generat, side-by-side; mod redlines juridice; comparatie text simplificat CEFR.
+● Task queue: Sarcini de rulare lunga cu progres vizibil; reluare dupa refresh; notificari.
+● Localizare: UI multilingv (EN/RO la inceput); modul CEFR accepta input multilingv.
+● Accesibilitate: WCAG 2.1 AA; scurtaturi tastatura pentru revizuire/acceptare sugestii.
+A5. Guvernanta & control risc
+● Filtre: Detectie injection prompt; blocklist/allowlist linkuri externe; cerinta de citare unde e cazul.
+● Confidence gating: Praguri care impun revizuire umana inainte de export.
+● Retentie date: Politici configurabile per organizatie (ex: 90/365 zile); „legal hold”.
+ 
+B) Cerinte pe module
+B1. Evaluator sanse de proces
+Scop: Analiza document chemare in judecata – reclamant vs banca; estimarea sanselor de succes.
+Inputuri
+● Text document chemare in judecata 
+● Optional: avocat advers, judecator, locatie, produs bancar (credit, card, taxe etc.).
+Outputuri
+● Scor sanse de castig, banda de probabilitate (Foarte scazut / Scazut / Mediu / Ridicat), scor de incredere?
+● Estimari privind costurile, durata, completul de judecata;
+● Linkuri la legi/jurisprudenta citate (?)
+● Harta probleme: Repartizarea pe capete de cerere si analiza elementelor juridice.
+● Note de risc: Ex: incompatibilitate jurisdictie, termen prescriptie, lipsa prejudiciu (?)
+ 
+ 
+B2. Generator documente 
+Scop: Crearea de documente standard (cereri, intampinari, motiuni).
+Tipuri documente
+● Plangere, Intampinare, Cerere de respingere, Solicitari de probe, Scrisoare de tranzactionare, formulare specifice instantelor.
+Functionalitati
+● Asamblare document din clauze + text generat.
+● Citari auto-inserate cu referinte; campuri lipsa marcate (nume client, sume, date).
+● Respectare stil: numerotare, anteturi, semnaturi.
+● Validator: verifica obligatoriu sectiuni per tip document.
+● Export: DOCX si PDF pentru depunere.
+ 
+B3. Generator contracte
+Scop: Pornind de la sabloane, AI le adapteaza la specificul clientului.
+Functionalitati
+● Biblioteca sabloane: NDA, contract servicii, adendum GDPR, contracte de credit etc.
+● Input: date client (parti, adrese, lege aplicabila, durata, taxe, SLA, termeni DP).
+● Output: contract personalizat cu justificarea fiecarei clauze, optiuni alternative.
+● Mod negociere: compara cu modificarile contrapartii (redline).
+● Harta riscurilor: evidentiere clauze critice.
+ 
+B4. Evaluator & Simplificator CEFR
+Scop: Determina nivelul de complexitate lingvistica (A1–C2) si simplifica textele juridice spre nivel A1/A2.
+CEFR = Common European Framework of Reference for Languages (in romana: Cadrul European Comun de Referinta pentru Limbi).
+ 
+6 niveluri principale:
+● A1 – Incepator (poate intelege si folosi expresii foarte simple).
+● A2 – Elementar (poate purta conversatii simple, de zi cu zi).
+● B1 – Intermediar (poate intelege ideile principale din texte simple).
+● B2 – Intermediar avansat (poate purta conversatii complexe si intelege texte mai dificile).
+● C1 – Avansat (poate intelege texte lungi si complexe, se exprima fluent si spontan).
+● C2 – Proficient (poate intelege practic orice text, exprimare similara cu un nativ educat).
+ 
+Functionalitati
+● Output evaluare: scor CEFR + sub-scoruri (vocabular rar, lungime fraza, diateza pasiva, termeni juridici).
+● Simplificare: versiune la nivel A1/A2, pastrand termenii definiti, cu explicatii aditionale.
+● Diferentiere vizuala: comparatie side-by-side original vs simplificat.
+● Avertisment risc: daca simplificarea poate schimba sensul juridic → necesita confirmare umana.
+ 
+C) Date, modele & MLOps
+ 
+MLOps = Machine Learning Operations. Este echivalentul lui DevOps, dar aplicat pentru proiecte de inteligenta artificiala si machine learning.
+Cu alte cuvinte, MLOps = felul organizat in care „pui in productie” si intretii modelele de AI, astfel incat ele sa fie:
+● usor de antrenat si re-antrenat,
+● usor de testat si comparat (versiuni diferite de modele),
+● monitorizate (ca sa vezi daca dau rezultate bune si nu „o iau razna”),
+● si actualizate (fara sa strici aplicatia sau sa pierzi date).
+ 
+MLOps inseamna:
+1. Model registry – un „catalog” unde se tin toate versiunile de modele AI si se alege care sa fie activa.
+2. Automatizare – atunci cand apar date noi, modelul se poate reantrena automat.
+3. Monitorizare – urmareste calitatea predictiilor (ex: cate citari sunt valide, cate rezultate au fost editate de utilizatori).
+4. Feedback loop – folosesti corecturile si reactiile utilizatorilor ca sa imbunatatesti modelul.
+5. Guvernanta – stii exact ce versiune de model a generat un document, pentru trasabilitate juridica.
+ 
+ 
+C1. Surse de date
+● Corpus: directive/regulamente UE, legislatie nationala, jurisprudenta, ghiduri supraveghere, T&Cs bancare, petitii istorice (licentiate).
+● Metadate: jurisdictie, instanta, data, rezultat, clasificare tip cerere.
+● Licentiere: trasabilitate surse, respect robots.txt, jurnal provenienta.
+C2. Arhitectura
+● Frontend: Web app (React) + rutare pe roluri.
+● Backend API: GraphQL/REST; servicii pentru cazuri, documente, sabloane, audit.
+● Strat AI: orchestrator → modele (LLM, clasificatoare); prompturi versionate.
+● Vector store: pentru RAG cu ancore de citare.
+● Stocare: obiecte criptate + DB relational pentru metadate.
+● Procesare async: OCR, generare texte lungi, evaluari.
+● Hosting: regiune UE; optional instalare on-prem (cerinte bancare).
+ 
+D) Livrabile pentru dezvoltator
+ 
+1. Platforma de baza: autentificare, RBAC, audit, hosting UE, stocare documente, OCR.
+2. Module: Evaluator sanse proces, Generator intampinari, Generator contracte, Evaluator CEFR.
+3. Editor: modul track-changes, vizualizare comparativa, biblioteca clauze/contracte.
+4. Guvernanta: disclaimer, checkpoint inainte de export, politici de retentie.
+ 
+Exemple User Stories
+● Ca avocat coordonator, incarc o petitie si primesc banda de sanse + factori si citari in ≤ 60s.
+● Ca jurist, generez o intampinare conform jurisdictiei si export DOCX validat.
+● Ca revizor, simplific o scrisoare client la A2 si confirm avertismentele de risc.
+● Ca administrator, acord acces doar GB „AUD” si export jurnal activitate.
+ 
